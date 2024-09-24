@@ -12,7 +12,9 @@
   - Exibir ruídos daquela playlist(GET)
 
 Teremos uma playlist de favoritos
+
 Dados cadastrados do User
+
 Dados do controle parental(caso exista)
 - Configurações
   - exclusão de conta(DELETE)
