@@ -1,0 +1,18 @@
+{
+  "name": "api-calmwave-software",
+  "version": "1.0.0",
+  "description": "- Autenticação\r - Ruídos Calmantes(Já são presentes no sistema)\r   - Configuração de Atributos como Frequência, volume e loop(CRIADOS NO BANCO)\r - Upload de Ruídos externos(POST)\r - CRIAÇÃO DE PLAYLISTS(POST)\r   - INSERÇÃO DE RUÍDOS(SONGS)(POST)\r - Busca pelo nome(GETBYNAME)\r - Exibir playlists(GET)\r   - Exibir ruídos daquela playlist(GET)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Marcelo",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.3"
+  }
+}
