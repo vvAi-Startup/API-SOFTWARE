@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 const bcrypt = require('bcrypt')
 
 const parentSchema = new mongoose.Schema({
@@ -77,4 +77,4 @@ const NoiseSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema)
 const Noise = mongoose.model('Noise', NoiseSchema)
 
-module.exports = { User, Noise }
+export default { User, Noise }

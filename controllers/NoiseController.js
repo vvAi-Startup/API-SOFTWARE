@@ -1,11 +1,13 @@
-const Noise = require('../models/NoiseModel');
+import { noiseService, userService } from "../services/CalmwaveService.js";
+import { ObjectId } from "mongodb"
 
 // Obter todos os ruídos
-exports.getNoises = async (req, res) => {
+exports.getAllNoises = async (req, res) => {
   try {
-    const noises = await Noise.find();
-    res.json(noises);
+    const noises = await noiseService.getAll()
+    res.status(200).json(noises)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Erro ao obter ruídos' });
   }
 };
