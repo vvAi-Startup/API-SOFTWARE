@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-const bcrypt = require('bcrypt')
 
 const parentSchema = new mongoose.Schema({
   parent_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -35,24 +34,6 @@ const UserSchema = new mongoose.Schema({
     required: true
   }
 }, {timestamps: true})
-
-// Função para hash da senha antes de salvar
-// UserSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) return next();
-//   try {
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// // Método para verificar a senha
-// UserSchema.methods.matchPassword = async function (enteredPassword) {
-//   return await bcrypt.compare(enteredPassword, this.password);
-// };
-
 
 // Definindo o schema para Noise
 const NoiseSchema = new mongoose.Schema({

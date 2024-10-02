@@ -1,4 +1,5 @@
 import {Noise, User} from "../models/Calmwave.js"
+import bcrypt from 'bcrypt'
 
 class noiseService {
     async getAll() {
@@ -60,7 +61,11 @@ class userService{
     }
     async Create(userData){
         try{
-            const newUser = new User(userData)
+            const saltRounds = 10
+            const hashedPassword = await bcrypt.hash(userData.password, saltRounds)
+            const newUserData = {...userData, password: hashedPassword}
+
+            const newUser = new User(newUserData)
             await newUser.save()
         } catch(error){
             console.log(error)
@@ -68,10 +73,16 @@ class userService{
     }
     async Delete(id){
         try{
-            await User.findByIdAndDelete(id)
+            const deleteUser = await User.findByIdAndDelete(id)
+            if (deleteUser){
             console.log(`Usuário excluído com sucesso`)
+            return true
+        }else{
+            console.log('Usuário não encontrado')
+        }
         }catch(error){
             console.log(error)
+            throw error
         }
     }
 
@@ -85,9 +96,9 @@ class userService{
         }
     }
 
-    async getOne(id){
+    async getOne(email){
         try{
-            const user = await User.findOne({_id: id})
+            const user = await User.findOne({email: email})
             return user
         }catch(error){
             console.log(error)
