@@ -22,14 +22,18 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    minlength: 6
   },
   createdAt: {
     type: Date,
     default: Date.now
   },
   parents_control: [parentSchema],
-  cellphone_number: String
+  cellphone_number: {
+    type: String,
+    required: true
+  }
 }, {timestamps: true})
 
 // Função para hash da senha antes de salvar

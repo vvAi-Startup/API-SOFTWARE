@@ -1,24 +1,29 @@
+
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const { User } = require('../models/Calmwave') // Certifique-se de que está importando o User corretamente
+import { User } from "../models/Calmwave.js"
+import { userService } from '../services/CalmwaveService.js'
+import jwt from 'jsonwebtoken'
 
 // Chave secreta para o JWT
 const JWT_SECRET = 'weuth943h6935hye90sjgf93'
 
 // Registro de usuário
-exports.register = async (req, res) => {
-  const { name, email, password } = req.body
-
+exports.registerUser = async (req, res) => {
+  
   try {
-    // Verificar se o email já está em uso
-    let user = await User.findOne({ email }) // Use User aqui
-    if (user) {
-      return res.status(400).json({ message: 'Email já registrado.' })
+
+    const userData = req.body
+
+    if (!userData){
+      return res.status(400).json({message: 'Todos os dados precisam estar preenchidos'})
     }
 
-    // Criar novo usuário
-    user = new User({ name, email, password }) // Use User aqui
-    await user.save()
+    const existingUser = await User.findOne({ email })
+
+    await userService.Create(userData)
+    if (userData) {
+      res.status(400).json({ message: 'Email já registrado.' })
+    }
 
     // Gerar token JWT
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' })
