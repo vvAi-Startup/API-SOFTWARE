@@ -2,7 +2,7 @@ import { noiseService } from "../services/CalmwaveService.js";
 import { ObjectId } from "mongodb"
 
 // Obter todos os ruídos
-exports.getAllNoises = async (req, res) => {
+const getAllNoises = async (req, res) => {
   try {
     const noises = await noiseService.getAll()
     res.status(200).json(noises)
@@ -13,7 +13,7 @@ exports.getAllNoises = async (req, res) => {
 }
 
 // Criar um novo ruído
-exports.createNoise = async (req, res) => {
+const createNoise = async (req, res) => {
   try {
     const noiseData = req.body 
     await noiseService.Create(noiseData)
@@ -23,7 +23,7 @@ exports.createNoise = async (req, res) => {
   }
 }
 
-exports.deleteNoise = async (req, res) => {
+const deleteNoise = async (req, res) => {
   try{
     if (ObjectId.isValid(req.params.id)){
       const id = req.params.id
@@ -37,7 +37,7 @@ exports.deleteNoise = async (req, res) => {
   }
 }
 
-exports.updateNoise = async (req, res) => {
+const updateNoise = async (req, res) => {
   try{
     const id = req.params.id
 
@@ -58,7 +58,7 @@ exports.updateNoise = async (req, res) => {
   }
 }
 
-exports.getOneNoise = async (req, res) =>{
+const getOneNoise = async (req, res) =>{
   try{
     const id = req.params.id
     if(ObjectId.isValid(id)){
@@ -76,7 +76,7 @@ exports.getOneNoise = async (req, res) =>{
   }
 }
 
-
+export default { getAllNoises, getOneNoise, createNoise, updateNoise, deleteNoise}
 
 
 

@@ -24,10 +24,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
   parents_control: [parentSchema],
   cellphone_number: {
     type: String,

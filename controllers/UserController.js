@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 // Chave secreta para o JWT
 const JWT_SECRET = 'weuth943h6935hye90sjgf93'
 
-exports.registerUser = async (req, res) => {  
+const registerUser = async (req, res) => {  
   try {
     const { name, email, password} = req.body
 
@@ -27,7 +27,7 @@ exports.registerUser = async (req, res) => {
 }
 
 // Login de usuário
-exports.loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
     if (email != undefined || email != null){
@@ -67,7 +67,7 @@ exports.loginUser = async (req, res) => {
   }
 }
 
-exports.logoutUser = async (req, res) => {
+const logoutUser = async (req, res) => {
   try {
     // O cliente deve ser instruído a remover o token do armazenamento local
     res.status(200).json({ message: 'Logout realizado com sucesso.' });
@@ -78,7 +78,7 @@ exports.logoutUser = async (req, res) => {
 };
 
 
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const users = await userService.getAll()
     res.status(200).json(users)
@@ -88,7 +88,7 @@ exports.getAllUsers = async (req, res) => {
   }
 }
 
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try{
     const token = req.headers.authorization?.split(" ")[1]
     if (!token){
@@ -110,7 +110,7 @@ exports.deleteUser = async (req, res) => {
 }
 
 
-exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try{
     const token = req.headers.authorization?.split(" ")[1]
     if (!token){
@@ -133,7 +133,7 @@ exports.updateUser = async (req, res) => {
   }
 }
 
-exports.getOneUser = async (req, res) =>{
+const getOneUser = async (req, res) =>{
   try{
     const email = req.params.email
     const user = await userService.getOne(email)
@@ -146,3 +146,5 @@ exports.getOneUser = async (req, res) =>{
     res.status(500).json({error: "Erro interno do servidor"})
   }
 }
+
+export default { getOneUser, getAllUsers, updateUser, deleteUser, logoutUser, registerUser, loginUser}

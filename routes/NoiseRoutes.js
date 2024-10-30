@@ -1,9 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const NoiseController = require('../controllers/NoiseController');
+import express from 'express'
+const noiseRoutes = express.Router()
+import NoiseController from '../controllers/NoiseController.js'
+import Auth from '../middleware/Auth.js'
 
 // Rotas para ruídos
-router.get('/noises', NoiseController.getNoises);
-router.post('/noises', NoiseController.createNoise);
+routerNoise.get('/noises', NoiseController.getAllNoises)
+routerNoise.get('/noise/:id', NoiseController.getOneNoise)
 
-module.exports = router;
+routerNoise.post('/noise', Auth.Authorization, NoiseController.createNoise)
+routerNoise.put('/noise/:id', Auth.Authorization, NoiseController.updateNoise)
+routerNoise.delete('/noise/:id', Auth.Authorization, NoiseController.deleteNoise)
+
+export default noiseRoutes

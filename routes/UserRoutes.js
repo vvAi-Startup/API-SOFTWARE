@@ -1,21 +1,23 @@
 import express from 'express'
 const userRoutes = express.Router()
-import {registerUser, loginUser, logoutUser, deleteUser, updateUser, getAllUsers, getOneUser} from "../controllers/UserController.js"
+import UserController from "../controllers/UserController.js"
+import Auth from '../middleware/Auth.js'
 
 // Rota de registro
-userRoutes.post('/register', registerUser)
+userRoutes.post('/register', UserController.registerUser)
 
 // Rota de login
-userRoutes.post('/login', loginUser)
+userRoutes.post('/login', UserController.loginUser)
 
-userRoutes.post('/logout', logoutUser)
+userRoutes.post('/logout', Auth.Authorization, UserController.logoutUser)
 
-userRoutes.delete('/delete-user', deleteUser)
+userRoutes.delete('/delete-user/:id', Auth.Authorization, UserController.deleteUser)
 
-userRoutes.put('/update-user', updateUser)
+userRoutes.put('/update-user', Auth.Authorization, UserController.updateUser)
 
-userRoutes.get('/users', getAllUsers)
+//Por enquantio não é necessário visualizar dados dos usuários
+// userRoutes.get('/users', UserController.getAllUsers)
 
-userRoutes.get('/:email', getOneUser)
+userRoutes.get('/user/:id', Auth.Authorization, UserController.getOneUser)
 
 export default userRoutes

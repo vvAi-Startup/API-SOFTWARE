@@ -1,23 +1,31 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const app = express()
+import express from 'express'
 
-// Importar as rotas
-//
-// Rotas de autenticação
-app.use('/api/auth', authRoutes);
+const app = express()
+import dotenv from 'dotenv'
+dotenv.config()
+
+import mongoose from './config/connection-db.js'
+import User from './models/Calmwave.js'
+import Noise from './models/Calmwave.js'
 
 // Middleware para processar JSON
 app.use(express.json())
 
-// Conectar ao MongoDB (usando 127.0.0.1 para evitar problemas com ::1/IPv6)
-// mongoose.connect('mongodb://127.0.0.1:27017/calmwave')
-//   .then(() => console.log('MongoDB conectado com sucesso.'))
-//   .catch((error) => console.log('Erro ao conectar ao MongoDB:', error));
+app.use(express.urlencoded({extended: false}))
 
+// Importar as rotas
+
+// Rotas de autenticação
+import noiseRoutes from './routes/NoiseRoutes.js'
+app.use('/api', noiseRoutes)
+import userRoutes from './routes/UserRoutes.js'
+app.use('/', userRoutes)
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+app.listen(PORT, (error) => {
+  if(error){
+    console.log(error)
+  }
+  console.log(`Servidor rodando na porta http://localhost:${PORT}`)
+})
