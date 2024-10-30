@@ -1,4 +1,4 @@
-import { noiseService } from "../services/CalmwaveService.js";
+import noiseService from "../services/NoiseService.js";
 import { ObjectId } from "mongodb"
 
 // Obter todos os ruídos

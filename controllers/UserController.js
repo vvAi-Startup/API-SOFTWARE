@@ -1,4 +1,4 @@
-import { userService } from '../services/CalmwaveService.js'
+import userService from '../services/NoiseService.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from "bcrypt"
 
