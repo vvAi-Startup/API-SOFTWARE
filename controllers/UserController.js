@@ -1,15 +1,17 @@
-import userService from '../services/NoiseService.js'
+import userService from '../services/UserService.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from "bcrypt"
+import dotenv from "dotenv"
+dotenv.config()
 
 // Chave secreta para o JWT
-const JWT_SECRET = 'weuth943h6935hye90sjgf93'
+const JWT_SECRET = process.env.JWT_SECRET
 
 const registerUser = async (req, res) => {  
   try {
-    const { name, email, password} = req.body
+    const { name, email, password, cellphone_number, role} = req.body
 
-    if (!name || !email || !password){
+    if (!name || !email || !password || !cellphone_number){
       return res.status(400).json({message: 'Todos os dados precisam estar preenchidos'})
     }
 
@@ -18,7 +20,11 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Email já registrado.' })
     }
 
-    await userService.Create({ name, email, password})
+    const userRole = role || 'user';
+
+
+    await userService.Create({ name, email, password, cellphone_number, role: userRole})
+
     res.status(201).json({ message: 'Usuário criado com sucesso.' })
   } catch (error) {
     console.error(error); // Log do erro

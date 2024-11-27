@@ -1,4 +1,7 @@
-import User from "../models/Calmwave.js"
+import Calmwave from "../models/Calmwave.js"
+
+const { User } = Calmwave
+
 import bcrypt from 'bcrypt'
 
 class userService{

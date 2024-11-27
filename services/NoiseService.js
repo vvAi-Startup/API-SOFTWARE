@@ -1,4 +1,6 @@
-import Noise from "../models/Calmwave.js"
+import Calmwave from "../models/Calmwave.js"
+
+const { Noise } = Calmwave
 
 class noiseService {
     async getAll() {

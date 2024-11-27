@@ -1,4 +1,6 @@
-import Support from "../models/Calmwave.js"
+import Calmwave from "../models/Calmwave.js"
+
+const { Support } = Calmwave
 
 class supportService {
     async getAll() {
