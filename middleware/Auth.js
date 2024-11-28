@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken"
 import UserController from "../controllers/UserController.js"
+import dotenv from "dotenv"
+dotenv.config()
+
 
 // Função de Autenticação com JWT - Json Web Token
 const Authorization = (req, res, next) => {
@@ -7,7 +10,7 @@ const Authorization = (req, res, next) => {
   if (authToken != undefined) {
     const bearer = authToken.split(" ")
     const token = bearer[1]
-    jwt.verify(token, UserController.JWTSecret, (error, data) => {
+    jwt.verify(token, process.env.JWT_SECRET, (error, data) => {
       if (error) {
         res.status(401);
         res.json({ error: "Token inválido!" })
@@ -16,6 +19,7 @@ const Authorization = (req, res, next) => {
         req.loggedUser = {
           id: data.id,
           email: data.email,
+          role: data.role,
         }
         next()
       }

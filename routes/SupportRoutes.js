@@ -9,6 +9,6 @@ supportRoutes.get('/support/:id', Auth.Authorization, SupportController.getOneRe
 supportRoutes.get('/supports', Auth.Authorization, CheckAdmin.checkAdminRole, SupportController.getAllRequests)
 supportRoutes.post('/support', Auth.Authorization, SupportController.createRequest)
 supportRoutes.put('/support/:id', Auth.Authorization, SupportController.updateRequest)
-supportRoutes.delete('/support/:id', Auth.Authorization, SupportController.deleteRequest)
+supportRoutes.delete('/support/:id', Auth.Authorization, CheckAdmin.checkAdminRole, SupportController.deleteRequest)
 
 export default supportRoutes

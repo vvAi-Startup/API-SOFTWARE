@@ -1,4 +1,4 @@
-import supportService from "../services/SupportService.js";
+import supportService from "../services/SupportService.js"
 import { ObjectId } from "mongodb"
 
 const getAllRequests = async (req, res) => {
@@ -13,11 +13,16 @@ const getAllRequests = async (req, res) => {
 
 const createRequest = async (req, res) => {
   try {
-    const requestData = req.body 
+    const userId = req.loggedUser.id
+
+    const requestData = {
+      ...req.body,
+      userId,
+    } 
     await supportService.Create(requestData)
-    res.sendStatus(201)
+    res.status(201).json({ message: "Requisição de suporte criada com sucesso!" }) 
   } catch (error) {
-    res.status(500).json({ error: `Erro ao criar requisição: ${error}` })
+    res.status(500).json({ error: `Erro ao criar requisição: ${error.message}` })
   }
 }
 

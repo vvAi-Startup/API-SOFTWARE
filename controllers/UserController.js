@@ -42,7 +42,7 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         if(isMatch){
           jwt.sign(
-            {id: user._id, email: user.email},
+            {id: user._id, email: user.email, role: user.role},
             JWT_SECRET,
             { expiresIn: "48h"},
             (error, token) => {
