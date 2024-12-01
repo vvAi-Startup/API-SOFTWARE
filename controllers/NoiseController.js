@@ -4,22 +4,34 @@ import { ObjectId } from "mongodb"
 // Obter todos os ruídos
 const getAllNoises = async (req, res) => {
   try {
-    const noises = await noiseService.getAll()
-    res.status(200).json(noises)
+    const { role, id: userId} = req.loggedUser
+    if(role === 'admin'){
+      const noises = await noiseService.getAll()
+      res.status(200).json({noises})
+    }else{
+      const noises = await noiseService.getAllPerUser(userId)
+      if(!noises) return res.status(403).json({ error: "Não existe nenhum ruído nessa conta!" })
+      return res.status(200).json({noises})
+    }
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: `Erro ao obter ruídos: ${error}` })
+    res.status(500).json({ error: `Erro ao obter ruídos: ${error.message}` })
   }
 }
 
 // Criar um novo ruído
 const createNoise = async (req, res) => {
   try {
-    const noiseData = req.body 
+    const userId = req.loggedUser.id
+
+    const noiseData = {
+      ...req.body,
+      userId
+    } 
     await noiseService.Create(noiseData)
-    res.sendStatus(201)
+    res.status(201).json({ message: "Ruído adicionado com sucesso!"}) 
   } catch (error) {
-    res.status(500).json({ error: `Erro ao criar ruído: ${error}` })
+    res.status(500).json({ error: `Erro ao criar ruído: ${error.message}` })
   }
 }
 
@@ -61,19 +73,25 @@ const updateNoise = async (req, res) => {
 const getOneNoise = async (req, res) =>{
   try{
     const id = req.params.id
+    const { role, id: userId } = req.loggedUser
+
     if(ObjectId.isValid(id)){
-      const noise = await noiseService.getOne(id)
-      if(!noise){
-        res.sendStatus(404).json({error: 'Ruído não encontrado'})
+      if(role === 'admin'){
+        const noise = await noiseService.getOne(id)
+        if(!noise) return res.sendStatus(404).json({error: 'Ruído não encontrado'})
+        return res.status(200).json({noise})
       } else{
-        res.status(200).json({noise})
+        const noise = await noiseService.getOnePerUser(id, userId)
+        if(!noise) return res.status(403).json({ error: "Não existe nenhum ruído com esse ID em sua conta!" })
+        return res.status(200).json({noise})
       }
-    } else{
-      res.sendStatus(400)
     }
   }catch(error){
-    res.status(500).json({error: "Erro interno do servidor"})
+    res.status(500).json({error: `Erro interno do servidor ${error.message}`})
   }
+
+
+
 }
 
 export default { getAllNoises, getOneNoise, createNoise, updateNoise, deleteNoise}

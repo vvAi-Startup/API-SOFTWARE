@@ -11,6 +11,15 @@ class noiseService {
             console.log(error)
         }
     }
+
+    async getAllPerUser(userId){
+        try {
+            const noises = await Noise.find({ userId: userId })
+            return noises
+        } catch(error){
+            console.log(error)
+        }
+    }
     
     async Create(noiseData){
         try{
@@ -45,6 +54,15 @@ class noiseService {
         try{
             const noise = await Noise.findOne({_id: id})
             return noise
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    async getOnePerUser(id, userId){
+        try{
+            const noiseUser = await Noise.findOne({_id: id, userId: userId})
+            return noiseUser
         }catch(error){
             console.log(error)
         }
