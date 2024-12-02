@@ -39,14 +39,37 @@ class noiseService {
         }
     }
 
+    async DeletePerUser(id, userId){
+        try{
+            await Noise.findOneAndDelete({_id: id, userId: userId})
+            console.log(`Ruído com id: ${id} foi excluído de sua conta!`)
+        } catch(error){
+            console.log(error)
+        }
+    }
+
     async Update(id, noiseData) {
         try {
             // O segundo parâmetro usa { new: true } para retornar o documento atualizado
-            const updatedNoise = await Noise.findByIdAndUpdate(id, noiseData, { new: true });
-            console.log(`Dados do ruído com id: ${id} alterado com sucesso.`);
-            return updatedNoise; // Retorne o ruído atualizado, se necessário
+            const updatedNoise = await Noise.findByIdAndUpdate(id, noiseData, { new: true })
+            console.log(`Dados do ruído com id: ${id} alterado com sucesso.`)
+            return updatedNoise // Retorne o ruído atualizado, se necessário
         } catch (error) {
-            console.log(error);
+            console.log(error)
+        }
+    }
+
+    async UpdatePerUser(id, userId, noiseData){
+        try{
+            const updateNoise = await Noise.findOneAndUpdate(
+                { _id: id, userId: userId },
+                noiseData,
+                { new: true }
+            )
+            console.log(`Dados do seu ruído com id: ${id} alterado com sucesso.`)
+            return updateNoise
+        } catch(error){
+            console.log(error)
         }
     }
 

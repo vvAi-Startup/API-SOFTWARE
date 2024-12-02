@@ -5,8 +5,17 @@ const { Support } = Calmwave
 class supportService {
     async getAll() {
         try {
-            const request = await Support.find()
-            return request
+            const requests = await Support.find()
+            return requests
+        } catch(error){
+            console.log(error)
+        }
+    }
+
+    async getAllPerUser(userId){
+        try {
+            const requests = await Support.find({ userId: userId })
+            return requests
         } catch(error){
             console.log(error)
         }
@@ -41,10 +50,33 @@ class supportService {
         }
     }
 
+    async UpdatePerUser(id, userId, requestData){
+        try{
+            const updateRequest = await Support.findOneAndUpdate(
+                { _id: id, userId: userId },
+                requestData,
+                { new: true }
+            )
+            console.log(`Dados de sua requisição com id: ${id} alterados com sucesso.`)
+            return updateRequest
+        } catch(error){
+            console.log(error)
+        }
+    }
+
     async getOne(id){
         try{
             const request = await Support.findOne({_id: id})
             return request
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    async getOnePerUser(id, userId){
+        try{
+            const requestUser = await Support.findOne({_id: id, userId: userId})
+            return requestUser
         }catch(error){
             console.log(error)
         }

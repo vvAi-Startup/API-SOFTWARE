@@ -3,8 +3,17 @@ import { ObjectId } from "mongodb"
 
 const getAllRequests = async (req, res) => {
   try {
-    const requests = await supportService.getAll()
-    res.status(200).json(requests)
+    const { role, id: userId} = req.loggedUser
+    if(role === 'admin'){
+      const requests = await supportService.getAll()
+      res.status(200).json({requests})
+    }else{
+      const requests = await supportService.getAllPerUser(userId)
+      if(!requests){
+        return res.status(403).json({ error: "Não existe nenhuma requisição feita nesta conta!" })
+      }
+      return res.status(200).json({requests})
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: `Erro ao obter requisições: ${error}` })
@@ -43,38 +52,56 @@ const deleteRequest = async (req, res) => {
 const updateRequest = async (req, res) => {
   try{
     const id = req.params.id
+    const { role, id: userId } = req.loggedUser
 
     if(ObjectId.isValid(id)){
+
       const requestUpdateData = req.body
 
-      const updatedRequest = await supportService.Update(id, requestUpdateData)
-      if(updatedRequest){
-        res.status(200).json({updatedRequest}) // OK! 
-      } else{
+      if(role === 'admin'){
+        const updatedRequest = await supportService.Update(id, requestUpdateData)
+      if(!updatedRequest){
         res.status(404).json({error: 'Requisição não encontrada'})
+      } 
+      return res.status(200).json({updatedRequest})
+      }else{
+        const updatedRequest = await supportService.UpdatePerUser(id, userId, requestUpdateData)
+        if(!updatedRequest){
+          return res.status(403).json({error: 'Requisição não encontrado em sua conta'})
+        }
+        return res.status(200).json({updatedRequest})
       }
-    }else{
-      res.sendStatus(400)
+      }else{
+        res.status(400).json({ error: 'ID inválido '})
     }
-  } catch(error){
-      res.status(500).json({error: `Erro ao atualizar: ${error}`})
+  }catch(error){
+      res.status(500).json({error: `Erro ao atualizar: ${error.message}`})
   }
 }
 
 const getOneRequest = async (req, res) =>{
   try{
     const id = req.params.id
+    const { role, id: userId } = req.loggedUser
+
     if(ObjectId.isValid(id)){
-      const request = await supportService.getOne(id)
+      if(role === 'admin'){
+        const request = await supportService.getOne(id)
       if(!request){
-        res.sendStatus(404).json({error: 'Requisição não encontrado'})
-      } else{
-        res.status(200).json({request})
+        return res.status(404).json({error: 'Requisição não encontrada'})
+      } 
+      return res.status(200).json({request})
+      }else{
+        const request = await supportService.getOnePerUser(id, userId)
+        if(!request){
+          return res.status(403).json({ error: "Não existe nenhuma requisição com esse ID em sua conta!" })
+        }
+        return res.status(200).json({request})
       }
-    } else{
-      res.sendStatus(400)
-    }
-  }catch(error){
+      }else{
+        res.status(400).json({ error: 'ID inválido '})
+    } 
+    }catch(error){
     res.status(500).json({error: "Erro interno do servidor"})
   }
 }

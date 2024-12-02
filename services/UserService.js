@@ -58,6 +58,15 @@ class userService{
             console.log(error)
         }
     }
+
+    async getOnePerUser(email, userId){
+        try{
+            const user = await User.findOne({email: email, userId: userId})
+            return user
+        }catch(error){
+            console.log(error)
+        }
+    }
 }
 
 export default new userService()

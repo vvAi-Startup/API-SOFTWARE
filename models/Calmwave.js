@@ -88,6 +88,10 @@ const SupportSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true
+  },
+  isAtive: {
+    type: Boolean,
+    default: true
   }
 }, {timestamps: true})
 

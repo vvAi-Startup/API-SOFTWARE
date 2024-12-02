@@ -1,6 +1,7 @@
 import userService from '../services/UserService.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from "bcrypt"
+import { ObjectId } from "mongodb"
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -76,12 +77,12 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
   try {
     // O cliente deve ser instruído a remover o token do armazenamento local
-    res.status(200).json({ message: 'Logout realizado com sucesso.' });
+    res.status(200).json({ message: 'Logout realizado com sucesso.' })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erro no servidor.', error: error.message });
+    console.error(error)
+    res.status(500).json({ message: 'Erro no servidor.', error: error.message })
   }
-};
+}
 
 
 const getAllUsers = async (req, res) => {
@@ -90,63 +91,64 @@ const getAllUsers = async (req, res) => {
     res.status(200).json(users)
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: `Erro ao obter usuários: ${error}` })
+    return res.status(500).json({ error: `Erro ao obter usuários: ${error}` })
   }
 }
 
 const deleteUser = async (req, res) => {
   try{
-    const token = req.headers.authorization?.split(" ")[1]
-    if (!token){
-      return res.status(401).json({ message: "Token não fornecido." })
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET)
-    const userId = decoded.id
-
-    const userDeleted = await userService.Delete(userId)
-    if(userDeleted){
-      return res.sendStatus(204)
+    const {id: userId} = req.loggedUser
+    if(ObjectId.isValid(userId)){
+      const userDeleted = await userService.Delete(userId)
+      if(!userDeleted){
+        return res.status(404).json({message: "Usuário não encontrado!"})
+      }
+      return res.status(204).json({message: 'Conta Deletada'})
     }else{
-      return res.status(404).json({message: "Usuário não encontrado!"})
+      return res.status(400).json({ message: "ID inválido." })
     }
   }catch(error){
-    res.status(500).json({ error: `Erro ao deletar usuário: ${error}` })
+    return res.status(500).json({ error: `Erro ao deletar usuário: ${error.message}` })
   }
 }
 
 
 const updateUser = async (req, res) => {
   try{
-    const token = req.headers.authorization?.split(" ")[1]
-    if (!token){
-      return res.status(401).json({ message: "Token não fornecido." })
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET)
-    const userId = decoded.id
-    
+    const {id: userId} = req.loggedUser
     const userData = req.body
-    const updatedUser = await userService.Update(userId, userData)
 
-    if(updatedUser){
-      return res.status(200).json({ message: "Usuário atualizado com sucesso.", user: updatedUser });
-      } else{
+    if(ObjectId.isValid(userId)){
+      const updatedUser = await userService.Update(userId, userData)
+      if(!updatedUser){
         return res.status(404).json({message: "Usuário não encontrado."})
       }
+      return res.status(200).json({ message: "Usuário atualizado com sucesso.", user: updatedUser })
+    }
     } catch(error){
-      res.status(500).json({error: `Erro ao atualizar: ${error}`})
+      res.status(500).json({error: `Erro ao atualizar: ${error.message}`})
   }
 }
 
 const getOneUser = async (req, res) =>{
   try{
-    const email = req.params.email
-    const user = await userService.getOne(email)
-    if (user) {
-      res.status(200).json({user})
+    const { email, id: userId } = req.loggedUser
+    if(ObjectId.isValid(userId)){
+      if(role === 'admin'){
+        const user = await userService.getOne(email)
+        if(!user){
+          return res.status(404).json({ error: "Usuário não encontrado." })
+        }
+        return res.status(200).json({user})
+      }else{
+        const user = await userService.getOnePerUser(email, userId)
+        if(!user){
+          return res.status(403).json({ error: "Não existe nenhum usuário com esse ID!" })
+        }
+        return res.status(200).json({user})
+      }
     }else{
-      res.status(404).json({ error: "Usuário não encontrado." })
+      return res.status(400).json({ error: 'ID inválido '})
     }
   }catch(error){
     res.status(500).json({error: "Erro interno do servidor"})
