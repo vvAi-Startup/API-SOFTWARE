@@ -1,5 +1,56 @@
 import supportService from "../services/SupportService.js"
 import { ObjectId } from "mongodb"
+import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const sendSupportEmail = async (supportRequest, userEmail, nameUser) => {
+  try {
+    // Configuração do transporter para enviar e-mail
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', // Usando o Gmail (pode ser alterado para outro provedor)
+      auth: {
+        user: process.env.EMAIL, // Seu e-mail
+        pass: process.env.SENHA_EMAIL, // Senha do e-mail ou app password
+      },
+    })
+    const mailOptions = {
+      from: userEmail,
+      to: process.env.EMAIL, // E-mail do destinatário (admin)
+      subject: supportRequest.typeRequest || 'Nova Requisição de Suporte',
+      text: `Você recebeu uma nova requisição de suporte:\n\n
+             Nome: ${nameUser}\n
+             Email: ${userEmail}\n
+             Tipo: ${supportRequest.typeRequest}\n
+             Mensagem: ${supportRequest.content}\n
+             ID do Usuário: ${supportRequest.userId}`, // Incluindo o ID do usuário
+    }
+
+    // Enviar o e-mail
+    await transporter.sendMail(mailOptions)
+  } catch (error) {
+    console.error('Erro ao enviar o e-mail:', error)
+  }
+}
+
+
+const createRequest = async (req, res) => {
+  try {
+    const {email, id: userId, name:nameUser} = req.loggedUser
+    const requestData = {
+      ...req.body,
+      userId,
+    } 
+    const supportRequest = await supportService.Create(requestData)
+    if(supportRequest){
+      await sendSupportEmail(supportRequest, email, nameUser)
+      return res.status(201).json({ message: "Requisição de suporte criada com sucesso!" }) 
+    }
+  } catch (error) {
+    res.status(500).json({ error: `Erro ao criar requisição: ${error.message}` })
+  }
+}
 
 const getAllRequests = async (req, res) => {
   try {
@@ -20,20 +71,6 @@ const getAllRequests = async (req, res) => {
   }
 }
 
-const createRequest = async (req, res) => {
-  try {
-    const userId = req.loggedUser.id
-
-    const requestData = {
-      ...req.body,
-      userId,
-    } 
-    await supportService.Create(requestData)
-    res.status(201).json({ message: "Requisição de suporte criada com sucesso!" }) 
-  } catch (error) {
-    res.status(500).json({ error: `Erro ao criar requisição: ${error.message}` })
-  }
-}
 
 const deleteRequest = async (req, res) => {
   try{

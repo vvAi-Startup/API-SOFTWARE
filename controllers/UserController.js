@@ -51,6 +51,7 @@ const loginUser = async (req, res) => {
                 res.status(400)
                 res.json({ error: "Falha interna"})
               }else{
+                console.log("Usuário Logado")
                 res.status(200)
                 res.json({token: token})
               }
@@ -70,7 +71,7 @@ const loginUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error) 
-    res.status(500).json({ message: 'Erro no servidor.', error: error.message })
+    res.status(500).json({ message: 'Erro no servidor.', error: error })
   }
 }
 
